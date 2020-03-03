@@ -6,4 +6,6 @@ import com.myapps.minhasfinancas.model.entity.Usuario;
 
 public interface IUsuarioRepository extends JpaRepository<Usuario, Long> {
 
+	Boolean existsByEmail(String email);
+	
 }
