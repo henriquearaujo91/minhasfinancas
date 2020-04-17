@@ -12,6 +12,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.myapps.minhasfinancas.exception.ErroAutenticacao;
 import com.myapps.minhasfinancas.exception.RegraNegocioException;
 import com.myapps.minhasfinancas.model.entity.Usuario;
 import com.myapps.minhasfinancas.model.repository.IUsuarioRepository;
@@ -21,6 +22,9 @@ import com.myapps.minhasfinancas.service.impl.UsuarioServiceImpl;
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class UsuarioServiceTest {
+
+	private static final String EMAIL = "henrique.araujo.ads@gmail.com";
+	private static final String SENHA = "fa9fa2";
 
 	IUsuarioService usuarioService;
 
@@ -36,17 +40,38 @@ public class UsuarioServiceTest {
 	public void deveAutenticarUmUsuarioComSucesso() {
 		Assertions.assertDoesNotThrow(() -> {
 			// CENARIO
-			String email = "henrique.araujo.ads@gmail.com";
-			String senha = "fa9fa2";
 
-			Usuario usuario = Usuario.builder().email(email).senha(senha).id(1l).build();
-			Mockito.when(usuarioRepository.findByEmail(email)).thenReturn(Optional.of(usuario));
+			Usuario usuario = retornaUsuario();
+			Mockito.when(usuarioRepository.findByEmail(EMAIL)).thenReturn(Optional.of(usuario));
 
 			// ACAO
-			Usuario result = usuarioService.autenticar(email, senha);
-			
-			//RESULTADO
+			Usuario result = usuarioService.autenticar(EMAIL, SENHA);
+
+			// RESULTADO
 			Assertions.assertNotNull(result);
+		});
+	}
+
+	@Test
+	public void deveLancarErroQuandoNaoEncontrarUsuarioCadastradoComOEmailInformado() {
+		Assertions.assertThrows(ErroAutenticacao.class, () -> {
+			// CENARIO
+			Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.empty());
+
+			// ACAO
+			usuarioService.autenticar(EMAIL, SENHA);
+		});
+	}
+
+	@Test
+	public void deveLacarErroQuandoSenhaNaoBater() {
+		Assertions.assertThrows(ErroAutenticacao.class, () -> {
+			// CENARIO
+			Usuario usuario = retornaUsuario();
+			Mockito.when(usuarioRepository.findByEmail(Mockito.anyString())).thenReturn(Optional.of(usuario));
+
+			// ACAO
+			usuarioService.autenticar(EMAIL, "ksj67sd");
 		});
 	}
 
@@ -70,6 +95,9 @@ public class UsuarioServiceTest {
 			// ACAO
 			usuarioService.validarEmail("henrique.araujo.ads@gmail.com");
 		});
+	}
 
+	public static Usuario retornaUsuario() {
+		return Usuario.builder().email(EMAIL).senha(SENHA).id(1l).build();
 	}
 }
