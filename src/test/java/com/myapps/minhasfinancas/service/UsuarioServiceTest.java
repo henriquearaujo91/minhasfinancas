@@ -1,36 +1,35 @@
 package com.myapps.minhasfinancas.service;
 
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import com.myapps.minhasfinancas.exception.RegraNegocioException;
-import com.myapps.minhasfinancas.model.entity.Usuario;
 import com.myapps.minhasfinancas.model.repository.IUsuarioRepository;
+import com.myapps.minhasfinancas.service.impl.UsuarioServiceImpl;
 
-@SpringBootTest
 @RunWith(SpringRunner.class)
 @ActiveProfiles("test")
 public class UsuarioServiceTest {
 
-	@Autowired
 	IUsuarioService usuarioService;
-
-	@Autowired
 	IUsuarioRepository usuarioRepository;
+
+	@BeforeEach
+	public void setUp() {
+		usuarioRepository = Mockito.mock(IUsuarioRepository.class);
+		usuarioService = new UsuarioServiceImpl(usuarioRepository);
+	}
 
 	@Test
 	public void deveValidarEmail() {
 		Assertions.assertDoesNotThrow(() -> {
 			// CENARIO
-			IUsuarioRepository usuarioRepositoryMock = Mockito.mock(IUsuarioRepository.class);
-			usuarioRepository.deleteAll();
-
+			Mockito.when(usuarioRepository.existsByEmail(Mockito.anyString())).thenReturn(false);
 			// ACAO
 			usuarioService.validarEmail("henrique.araujo.ads@gmail.com");
 		});
@@ -40,8 +39,7 @@ public class UsuarioServiceTest {
 	public void deveLancarErroAoValidarEmailQuandoExistirEmailCadastrado() {
 		Assertions.assertThrows(RegraNegocioException.class, () -> {
 			// CENARIO
-			Usuario usuario = Usuario.builder().nome("henrique").email("henrique.araujo.ads@gmail.com").build();
-			usuarioRepository.save(usuario);
+			Mockito.when(usuarioRepository.existsByEmail(Mockito.anyString())).thenReturn(true);
 
 			// ACAO
 			usuarioService.validarEmail("henrique.araujo.ads@gmail.com");
