@@ -16,7 +16,7 @@ import com.myapps.minhasfinancas.model.entity.Usuario;
 public class UsuarioRepositoryTest {
 
 	@Autowired
-	private UsuarioRepository repository;
+	private IUsuarioRepository repository;
 
 	@Test
 	public void deveVerificarAExistenciaDeUmEmail() {
