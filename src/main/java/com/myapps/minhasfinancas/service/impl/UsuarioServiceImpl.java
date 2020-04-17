@@ -1,6 +1,7 @@
 package com.myapps.minhasfinancas.service.impl;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.myapps.minhasfinancas.exception.RegraNegocioException;
 import com.myapps.minhasfinancas.model.entity.Usuario;
@@ -24,15 +25,16 @@ public class UsuarioServiceImpl implements IUsuarioService {
 	}
 
 	@Override
+	@Transactional
 	public Usuario salvar(Usuario usuario) {
-		// TODO Auto-generated method stub
-		return null;
+		validarEmail(usuario.getEmail());
+		return repository.save(usuario);
 	}
 
 	@Override
 	public void validarEmail(String email) {
 		Boolean existe = repository.existsByEmail(email);
-		if(existe) {
+		if (existe) {
 			throw new RegraNegocioException("Já existe um usuário cadastrado com este email.");
 		}
 	}
