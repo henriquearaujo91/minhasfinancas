@@ -3,12 +3,12 @@ package com.myapps.minhasfinancas.service;
 import java.util.Optional;
 
 import org.junit.jupiter.api.Assertions;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -25,22 +25,40 @@ public class UsuarioServiceTest {
 
 	private static final String EMAIL = "henrique.araujo.ads@gmail.com";
 	private static final String SENHA = "fa9fa2";
+	private static final String NOME = "Henrique";
+	private static final Long UM_LONG = Long.valueOf(1);
 
-	IUsuarioService usuarioService;
+	@SpyBean
+	UsuarioServiceImpl usuarioService;
 
 	@MockBean
 	IUsuarioRepository usuarioRepository;
 
-	@BeforeEach
-	public void setUp() {
-		usuarioService = new UsuarioServiceImpl(usuarioRepository);
+	@Test
+	public void deveSalvarUmUsuario() {
+		Assertions.assertDoesNotThrow(() -> {
+			// CENARIO
+			Mockito.doNothing().when(usuarioService).validarEmail(Mockito.anyString());
+			Usuario usuario = retornaUsuario();
+
+			Mockito.when(usuarioRepository.save(Mockito.any(Usuario.class))).thenReturn(usuario);
+
+			// ACAO
+			Usuario result = usuarioService.salvar(usuario);
+
+			// RESULTADO
+			Assertions.assertEquals(UM_LONG, result.getId());
+			Assertions.assertEquals(EMAIL, result.getEmail());
+			Assertions.assertEquals(NOME, result.getNome());
+			Assertions.assertEquals(SENHA, result.getSenha());
+		});
+
 	}
 
 	@Test
 	public void deveAutenticarUmUsuarioComSucesso() {
 		Assertions.assertDoesNotThrow(() -> {
 			// CENARIO
-
 			Usuario usuario = retornaUsuario();
 			Mockito.when(usuarioRepository.findByEmail(EMAIL)).thenReturn(Optional.of(usuario));
 
@@ -61,7 +79,7 @@ public class UsuarioServiceTest {
 			// ACAO
 			usuarioService.autenticar(EMAIL, SENHA);
 		});
-		
+
 		Assertions.assertEquals(exception.getMessage(), "Usuário não encontrado para o email informado.");
 	}
 
@@ -102,6 +120,6 @@ public class UsuarioServiceTest {
 	}
 
 	public static Usuario retornaUsuario() {
-		return Usuario.builder().email(EMAIL).senha(SENHA).id(1l).build();
+		return Usuario.builder().nome(NOME).email(EMAIL).senha(SENHA).id(UM_LONG).build();
 	}
 }
