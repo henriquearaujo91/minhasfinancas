@@ -55,6 +55,20 @@ public class UsuarioServiceTest {
 
 	}
 
+	public void naoDeveSalvarUmUsuarioComEmailJaCadastrado() {
+		Assertions.assertThrows(RegraNegocioException.class, () -> {
+			// CENARIO
+			Usuario usuario = retornaUsuario();
+			Mockito.doThrow(RegraNegocioException.class).when(usuarioService).validarEmail(EMAIL);
+
+			// ACAO
+			usuarioService.salvar(usuario);
+
+			// VERIFICACAO
+			Mockito.verify(usuarioRepository, Mockito.never()).save(usuario);
+		});
+	}
+
 	@Test
 	public void deveAutenticarUmUsuarioComSucesso() {
 		Assertions.assertDoesNotThrow(() -> {
