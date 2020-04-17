@@ -55,6 +55,7 @@ public class UsuarioServiceTest {
 
 	}
 
+	@Test
 	public void naoDeveSalvarUmUsuarioComEmailJaCadastrado() {
 		Assertions.assertThrows(RegraNegocioException.class, () -> {
 			// CENARIO
