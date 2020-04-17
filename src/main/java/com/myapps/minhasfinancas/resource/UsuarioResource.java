@@ -18,6 +18,10 @@ public class UsuarioResource {
 
 	private IUsuarioService service;
 
+	public UsuarioResource(IUsuarioService service) {
+		this.service = service;
+	}
+
 	@PostMapping
 	public ResponseEntity salvar(@RequestBody UsuarioDTO dto) {
 		Usuario usuario = Usuario.builder().nome(dto.getNome()).email(dto.getEmail()).senha(dto.getSenha()).build();
