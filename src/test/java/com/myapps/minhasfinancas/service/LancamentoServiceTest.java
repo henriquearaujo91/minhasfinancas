@@ -11,6 +11,7 @@ import org.springframework.boot.test.mock.mockito.SpyBean;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import com.myapps.minhasfinancas.exception.RegraNegocioException;
 import com.myapps.minhasfinancas.model.entity.Lancamento;
 import com.myapps.minhasfinancas.model.entity.enums.StatusLancamento;
 import com.myapps.minhasfinancas.model.repository.ILancamentoRepository;
@@ -46,7 +47,13 @@ public class LancamentoServiceTest {
 	
 	@Test
 	public void naoDeveSalvarUmLancamentoQuandoHouverErroDeValidacao() {
-		
+		// CENARIO
+		Lancamento lancamentoASalvar = LancamentoRepositoryTest.criarLancamento();
+		Mockito.doThrow(RegraNegocioException.class).when(service).validar(lancamentoASalvar);
+
+		//EXECUCAO/VERIFICACAO
+		catchThrowableOfType(() -> service.salvar(lancamentoASalvar), RegraNegocioException.class);//RETORNA RegraNegocioException AO TENTAR SALVAR
+		Mockito.verify(repository, Mockito.never()).save(lancamentoASalvar);// VERIFICA QUE NUNCA CHAMOU O METODO SAVE
 	}
 	
 }
