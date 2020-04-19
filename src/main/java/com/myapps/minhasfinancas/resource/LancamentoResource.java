@@ -1,7 +1,6 @@
 package com.myapps.minhasfinancas.resource;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,16 +23,15 @@ import com.myapps.minhasfinancas.model.entity.enums.TipoLancamento;
 import com.myapps.minhasfinancas.service.ILancamentoService;
 import com.myapps.minhasfinancas.service.IUsuarioService;
 
+import lombok.RequiredArgsConstructor;
+
 @RestController
 @RequestMapping("api/lancamentos")
+@RequiredArgsConstructor
 public class LancamentoResource {
 
-	private ILancamentoService service;
-	private IUsuarioService usuarioService;
-
-	public LancamentoResource(ILancamentoService service) {
-		this.service = service;
-	}
+	private final ILancamentoService service;
+	private final IUsuarioService usuarioService;
 
 	@GetMapping
 	public ResponseEntity buscar(
