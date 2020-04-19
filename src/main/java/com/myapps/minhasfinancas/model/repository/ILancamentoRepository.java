@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import com.myapps.minhasfinancas.model.entity.Lancamento;
+import com.myapps.minhasfinancas.model.entity.enums.TipoLancamento;
 
 public interface ILancamentoRepository extends JpaRepository<Lancamento, Long> {
 
 	@Query(value = "SELECT SUM(l.valor) FROM Lancamento l JOIN l.usuario u "
 			+ "WHERE u.id = :idUsuario AND l.tipo = :tipo "
 			+ "GROUP BY u ")
-	BigDecimal obterSaldoPorTipoLancamentoEUsuario(@Param("idUsuario") Long idUsuario, @Param("tipo") String tipo);
+	BigDecimal obterSaldoPorTipoLancamentoEUsuario(@Param("idUsuario") Long idUsuario,
+			@Param("tipo") TipoLancamento tipo);
 }
