@@ -2,8 +2,9 @@ package com.myapps.minhasfinancas.model.repository;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Optional;
 
-import org.assertj.core.api.Assertions;
+import static org.assertj.core.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,20 +37,52 @@ public class LancamentoRepositoryTest {
 		
 		lancamento = repository.save(lancamento);
 		
-		Assertions.assertThat(lancamento.getId()).isNotNull();
+		assertThat(lancamento.getId()).isNotNull();
 	}
 	
 	@Test
 	public void deveDeletarUmLancamento() {
-		Lancamento lancamento = criarLancamento();
-		entityManager.persist(lancamento);
+		Lancamento lancamento = criarEPersistirUmLancamento();
 		
 		lancamento = entityManager.find(Lancamento.class, lancamento.getId());
 		
 		repository.delete(lancamento);
 		
 		Lancamento lancamentoInexistente = entityManager.find(Lancamento.class, lancamento.getId());
-		Assertions.assertThat(lancamentoInexistente).isNull();
+		assertThat(lancamentoInexistente).isNull();
+	}
+
+	
+	@Test
+	public void deveAtualizarUmLancamento() {
+		Lancamento lancamento = criarEPersistirUmLancamento();
+
+		lancamento.setAno(2012);
+		lancamento.setDescricao("Teste atualizar");
+		lancamento.setStatus(StatusLancamento.CANCELADO);
+
+		repository.save(lancamento);
+
+		Lancamento lancamentoAtualizado = entityManager.find(Lancamento.class, lancamento.getId());
+
+		assertThat(lancamentoAtualizado.getAno()).isEqualTo(2012);
+		assertThat(lancamentoAtualizado.getDescricao()).isEqualTo("Teste atualizar");
+		assertThat(lancamentoAtualizado.getStatus()).isEqualTo(StatusLancamento.CANCELADO);
+	}
+	
+	@Test
+	public void deveBuscarUmLancamentoPorId() {
+		Lancamento lancamento = criarEPersistirUmLancamento();
+
+		Optional<Lancamento> lancamentoEncontrado = repository.findById(lancamento.getId());
+
+		assertThat(lancamentoEncontrado.isPresent()).isTrue();
+	}
+	
+	private Lancamento criarEPersistirUmLancamento() {
+		Lancamento lancamento = criarLancamento();
+		entityManager.persist(lancamento);
+		return lancamento;
 	}
 	
 	private static Lancamento criarLancamento() {
