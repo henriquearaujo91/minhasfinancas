@@ -1,7 +1,10 @@
 package com.myapps.minhasfinancas.service;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.data.repository.query.Param;
 
 import com.myapps.minhasfinancas.model.entity.Lancamento;
 import com.myapps.minhasfinancas.model.entity.enums.StatusLancamento;
@@ -21,4 +24,6 @@ public interface ILancamentoService {
 	void validar(Lancamento lancamento);
 	
 	Optional<Lancamento> obterPorId(Long id);
+	
+	BigDecimal obterSaldoPorUsuario(Long idUsuario);
 }
