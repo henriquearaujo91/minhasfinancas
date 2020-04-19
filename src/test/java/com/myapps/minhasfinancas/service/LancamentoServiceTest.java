@@ -56,4 +56,29 @@ public class LancamentoServiceTest {
 		Mockito.verify(repository, Mockito.never()).save(lancamentoASalvar);// VERIFICA QUE NUNCA CHAMOU O METODO SAVE
 	}
 	
+	@Test
+	public void deveAtualizarUmLancamento() {
+		Lancamento lancamentoSalvo = LancamentoRepositoryTest.criarLancamento();
+		lancamentoSalvo.setId(1l);
+		lancamentoSalvo.setStatus(StatusLancamento.PENDENTE);
+		
+		Mockito.doNothing().when(service).validar(lancamentoSalvo);//CRIA UM MOCK DO "lancamentoSalvo" UTILIZADO NO METODO DE VALIDAR
+		
+		Mockito.when(repository.save(lancamentoSalvo)).thenReturn(lancamentoSalvo);//CRIA UM MOCK DO "lancamentoSalvo" NO METODO SAVE 
+		
+		service.atualizar(lancamentoSalvo);
+		
+		Mockito.verify(repository, Mockito.times(1)).save(lancamentoSalvo);//VALIDA SE  A CHAMADA AO METODO "save" FOI EXECUTADA COM SUCESSO
+	}
+	
+	@Test
+	public void deveLancarErroAoTentarAtualizarUmLancamentoQueAindaNaoFoiSalvo() {
+		// CENARIO
+		Lancamento lancamentoASalvar = LancamentoRepositoryTest.criarLancamento();
+
+		//EXECUCAO/VERIFICACAO
+		catchThrowableOfType(() -> service.atualizar(lancamentoASalvar), NullPointerException.class);//RETORNA NullPointerException AO TENTAR SALVAR
+		Mockito.verify(repository, Mockito.never()).save(lancamentoASalvar);// VERIFICA QUE NUNCA CHAMOU O METODO SAVE
+	}
+	
 }
