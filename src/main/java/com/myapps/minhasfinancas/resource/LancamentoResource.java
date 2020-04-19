@@ -35,7 +35,7 @@ public class LancamentoResource {
 
 	@GetMapping
 	public ResponseEntity buscar(
-			@RequestParam(value = "desecricao", required = false) String descricao,
+			@RequestParam(value = "descricao", required = false) String descricao,
 			@RequestParam(value = "mes", required = false) Integer mes,
 			@RequestParam(value = "ano", required = false) Integer ano,
 			@RequestParam(value = "usuario") Long idUsuario){
