@@ -2,12 +2,16 @@ package com.myapps.minhasfinancas.service;
 
 import static org.assertj.core.api.Assertions.*;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mockito;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.mock.mockito.SpyBean;
+import org.springframework.data.domain.Example;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -102,5 +106,24 @@ public class LancamentoServiceTest {
 		
 		//VERIFICACAO
 		Mockito.verify(repository, Mockito.never()).delete(lancamento);// VERIFICA QUE NUNCA CHAMOU O METODO DELETE
+	}
+	
+	@Test
+	public void deveFiltrarLancamentos() {
+		// CENARIO
+		Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+		lancamento.setId(1l);
+
+		List<Lancamento> lista = Arrays.asList(lancamento);
+		Mockito.when(repository.findAll(Mockito.any(Example.class))).thenReturn(lista);
+		
+		// EXECUCAO
+		List<Lancamento> resultado = service.buscar(lancamento);
+		
+		// VERIFICACAO
+		assertThat(resultado)
+			.isNotEmpty()
+			.hasSize(1)
+			.contains(lancamento);
 	}
 }
