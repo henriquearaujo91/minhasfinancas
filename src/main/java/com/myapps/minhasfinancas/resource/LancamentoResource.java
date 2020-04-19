@@ -98,8 +98,8 @@ public class LancamentoResource {
 				.id(dto.getId())
 				.mes(dto.getMes())
 				.valor(dto.getValor())
-				.status(StatusLancamento.valueOf(dto.getStatus()))
-				.tipo(TipoLancamento.valueOf(dto.getTipo()))
+				.status(dto.getStatus() != null ? StatusLancamento.valueOf(dto.getStatus()) : null)
+				.tipo(dto.getTipo() != null ? TipoLancamento.valueOf(dto.getTipo()) : null)
 				.usuario(usuario)
 				.build();
 	}
