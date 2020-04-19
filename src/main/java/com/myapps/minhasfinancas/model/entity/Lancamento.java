@@ -1,7 +1,8 @@
 package com.myapps.minhasfinancas.model.entity;
 
 import java.math.BigDecimal;
-import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.Column;
 import javax.persistence.Convert;
@@ -64,6 +65,6 @@ public class Lancamento {
 
 	@Column(name = "data_cadastro")
 	@Convert(converter = Jsr310JpaConverters.LocalDateConverter.class)
-	private Date dataCadastro;
+	private LocalDate dataCadastro;
 
 }
