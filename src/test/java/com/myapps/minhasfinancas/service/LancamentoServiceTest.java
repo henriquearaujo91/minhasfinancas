@@ -74,11 +74,33 @@ public class LancamentoServiceTest {
 	@Test
 	public void deveLancarErroAoTentarAtualizarUmLancamentoQueAindaNaoFoiSalvo() {
 		// CENARIO
-		Lancamento lancamentoASalvar = LancamentoRepositoryTest.criarLancamento();
+		Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
 
 		//EXECUCAO/VERIFICACAO
-		catchThrowableOfType(() -> service.atualizar(lancamentoASalvar), NullPointerException.class);//RETORNA NullPointerException AO TENTAR SALVAR
-		Mockito.verify(repository, Mockito.never()).save(lancamentoASalvar);// VERIFICA QUE NUNCA CHAMOU O METODO SAVE
+		catchThrowableOfType(() -> service.atualizar(lancamento), NullPointerException.class);//RETORNA NullPointerException AO TENTAR SALVAR
+		Mockito.verify(repository, Mockito.never()).save(lancamento);// VERIFICA QUE NUNCA CHAMOU O METODO SAVE
 	}
 	
+	@Test
+	public void deveDeletarUmLancamento() {
+		Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();//PREENCHE A INSTANCIA DO LANCAMENTO
+		lancamento.setId(1l);
+		
+		service.deletar(lancamento);//DELETE O LANCAMENTO
+		
+		Mockito.verify(repository).delete(lancamento);// VERIFICA SE A DELECAO FOI EXECUTADA PARA O LANCAMENTO
+	}
+	
+	
+	@Test
+	public void deveLancarErroAoTentarDeletarUmLancamentoQueAindaNaoFoiSalvo() {
+		// CENARIO
+		Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+
+		//EXECUCAO
+		catchThrowableOfType(() -> service.deletar(lancamento), NullPointerException.class);//RETORNA NullPointerException AO TENTAR DELETAR
+		
+		//VERIFICACAO
+		Mockito.verify(repository, Mockito.never()).delete(lancamento);// VERIFICA QUE NUNCA CHAMOU O METODO DELETE
+	}
 }
