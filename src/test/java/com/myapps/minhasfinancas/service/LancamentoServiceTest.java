@@ -95,7 +95,6 @@ public class LancamentoServiceTest {
 		Mockito.verify(repository).delete(lancamento);// VERIFICA SE A DELECAO FOI EXECUTADA PARA O LANCAMENTO
 	}
 	
-	
 	@Test
 	public void deveLancarErroAoTentarDeletarUmLancamentoQueAindaNaoFoiSalvo() {
 		// CENARIO
@@ -125,5 +124,20 @@ public class LancamentoServiceTest {
 			.isNotEmpty()
 			.hasSize(1)
 			.contains(lancamento);
+	}
+
+	@Test
+	public void deveAtualizarOStatusDeUmLancamento() {
+		Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();//PREENCHE A INSTANCIA DO LANCAMENTO
+		lancamento.setId(1l);
+		lancamento.setStatus(StatusLancamento.PENDENTE);
+		
+		StatusLancamento novoStatus = StatusLancamento.EFETIVADO;
+		Mockito.doReturn(lancamento).when(service).atualizar(lancamento);
+		
+		service.atualizarStatus(lancamento, novoStatus);
+		
+		assertThat(lancamento.getStatus()).isEqualTo(novoStatus);
+		Mockito.verify(service).atualizar(lancamento);
 	}
 }
