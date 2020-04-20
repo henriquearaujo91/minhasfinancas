@@ -1,7 +1,12 @@
 package com.myapps.minhasfinancas.service;
 
-import static org.assertj.core.api.Assertions.*;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowableOfType;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +23,7 @@ import org.springframework.test.context.junit4.SpringRunner;
 
 import com.myapps.minhasfinancas.exception.RegraNegocioException;
 import com.myapps.minhasfinancas.model.entity.Lancamento;
+import com.myapps.minhasfinancas.model.entity.Usuario;
 import com.myapps.minhasfinancas.model.entity.enums.StatusLancamento;
 import com.myapps.minhasfinancas.model.repository.ILancamentoRepository;
 import com.myapps.minhasfinancas.model.repository.LancamentoRepositoryTest;
@@ -169,4 +175,45 @@ public class LancamentoServiceTest {
 		
 		assertThat(resultado.isPresent()).isFalse();
 	}
+	
+	@Test
+	public void deveValidarLancamento() {
+		assertDoesNotThrow(() -> {
+			// CENARIO
+			Lancamento lancamento = LancamentoRepositoryTest.criarLancamento();
+			lancamento.setUsuario(Usuario.builder().id(4l).build());
+			
+			// ACAO
+			service.validar(lancamento);
+		});
+	}
+
+	@Test
+	public void deveLancarErroAoTentarValidarLancamento() {
+		Lancamento lancamento = new Lancamento();
+
+		assertEquals(assertThrows(RegraNegocioException.class, () -> service.validar(lancamento)).getMessage(),
+				"Informe uma Descrição válida.");
+
+		lancamento.setDescricao("descricao");
+		assertEquals(assertThrows(RegraNegocioException.class, () -> service.validar(lancamento)).getMessage(),
+				"Informe um Mês válido.");
+
+		lancamento.setMes(12);
+		assertEquals(assertThrows(RegraNegocioException.class, () -> service.validar(lancamento)).getMessage(),
+				"Informe um Ano válido.");
+
+		lancamento.setAno(2020);
+		assertEquals(assertThrows(RegraNegocioException.class, () -> service.validar(lancamento)).getMessage(),
+				"Informe um Usuario.");
+
+		lancamento.setUsuario(Usuario.builder().id(12l).build());
+		assertEquals(assertThrows(RegraNegocioException.class, () -> service.validar(lancamento)).getMessage(),
+				"Informe um Valor válido.");
+
+		lancamento.setValor(BigDecimal.ONE);
+		assertEquals(assertThrows(RegraNegocioException.class, () -> service.validar(lancamento)).getMessage(),
+				"Informe um tipo de Lançamento.");
+	}
+	
 }
