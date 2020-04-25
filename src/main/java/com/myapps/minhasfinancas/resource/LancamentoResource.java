@@ -109,9 +109,13 @@ public class LancamentoResource {
 	}
 
 	private LancamentoDTO converter(Lancamento lancamento) {
-		return LancamentoDTO.builder().id(lancamento.getId()).descricao(lancamento.getDescricao())
-				.valor(lancamento.getValor()).mes(lancamento.getMes()).ano(lancamento.getAno())
-				.status(lancamento.getStatus().name()).tipo(lancamento.getTipo().name())
+		return LancamentoDTO.builder()
+				.id(lancamento.getId())
+				.descricao(lancamento.getDescricao())
+				.valor(lancamento.getValor())
+				.mes(lancamento.getMes()).ano(lancamento.getAno())
+				.status(lancamento.getStatus().name())
+				.tipo(lancamento.getTipo().name())
 				.usuario(lancamento.getUsuario().getId()).build();
 	}
 
